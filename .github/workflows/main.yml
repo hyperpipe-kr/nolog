@@ -24,7 +24,7 @@ jobs:
             - name: Checkout Blog Repository
               uses: actions/checkout@v2
               with:
-                  repository: ${{ vars.BLOG_REPO }}
+                  repository: ${{ secrets.BLOG_REPO }}
                   token: ${{ secrets.GITTOKEN }}
                   path: 'blog-repo'
 
@@ -47,29 +47,29 @@ jobs:
               env:
                   NOTION_KEY: ${{ secrets.NOTION_KEY }}
                   NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
-                  BLOG_URL: ${{ vars.BLOG_URL }}
-                  SAVE_DIR: 'blog-repo/${{ vars.SAVE_DIR }}'
-                  SAVE_SUB_DIR: ${{ vars.SAVE_SUB_DIR }}
-                  BLOG_REPO: ${{ vars.BLOG_REPO }}
-                  GIT_USER_NAME: ${{ vars.GIT_USER_NAME }}
-                  GIT_USER_EMAIL: ${{ vars.GIT_USER_EMAIL }}
+                  BLOG_URL: ${{ secrets.BLOG_URL }}
+                  SAVE_DIR: 'blog-repo/${{ secrets.SAVE_DIR }}'
+                  SAVE_SUB_DIR: ${{ secrets.SAVE_SUB_DIR }}
+                  BLOG_REPO: ${{ secrets.BLOG_REPO }}
+                  GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+                  GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
 
             - name: Commit and Push Changes to Current Repository
               run: |
-                  git config user.name '${{ vars.GIT_USER_NAME }}'
-                  git config user.email '${{ vars.GIT_USER_EMAIL }}'
+                  git config user.name '${{ secrets.GIT_USER_NAME }}'
+                  git config user.email '${{ secrets.GIT_USER_EMAIL }}'
                   git add .
                   git commit -m "Update metadata" || echo "No changes to commit in current repo"
-                  git remote set-url origin https://x-access-token:${{ secrets.GITTOKEN }}@github.com/${{ vars.GIT_USER_NAME }}/nolog.git
+                  git remote set-url origin https://x-access-token:${{ secrets.GITTOKEN }}@github.com/${{ github.repository }}.git
                   git push origin HEAD:master
 
             - name: Set Git remote URL with token and Commit and Push Changes
               id: commit_changes # 이 단계에 ID 부여
               run: |
                   cd blog-repo
-                  git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ vars.BLOG_REPO }}
-                  git config user.name '${{ vars.GIT_USER_NAME }}'
-                  git config user.email '${{ vars.GIT_USER_EMAIL }}'
+                  git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ secrets.BLOG_REPO }}
+                  git config user.name '${{ secrets.GIT_USER_NAME }}'
+                  git config user.email '${{ secrets.GIT_USER_EMAIL }}'
                   git add .
                   CHANGES=$(git status --porcelain)
                   if [ -n "$CHANGES" ]; then
@@ -90,7 +90,7 @@ jobs:
             - name: Checkout Blog Repository
               uses: actions/checkout@v2
               with:
-                  repository: '${{ vars.BLOG_REPO }}'
+                  repository: '${{ secrets.BLOG_REPO }}'
                   token: ${{ secrets.GITTOKEN }}
 
             - name: Use Node.js
@@ -110,10 +110,10 @@ jobs:
             - name: Set up GitHub token
               env:
                   GITHUB_TOKEN: ${{ secrets.GITTOKEN }}
-              run: git config --global user.email "${{ vars.GIT_USER_EMAIL }}" && git config --global user.name "${{ vars.GIT_USER_NAME }}"
+              run: git config --global user.email "${{ secrets.GIT_USER_EMAIL }}" && git config --global user.name "${{ secrets.GIT_USER_NAME }}"
 
             - name: Set Git remote URL with token
-              run: git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ vars.BLOG_REPO }}
+              run: git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ secrets.BLOG_REPO }}
 
             - name: Deploy to GitHub Pages
               run: npx gh-pages -d public
