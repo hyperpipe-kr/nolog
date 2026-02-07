@@ -99,10 +99,10 @@ jobs:
                   node-version: 20.3.1
 
             - name: Install node packages
-              run: yarn
+              run: npm install
 
             - name: Build
-              run: yarn build
+              run: npm run build
 
             - name: Set up GitHub token
               env:
