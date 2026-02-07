@@ -60,14 +60,14 @@ jobs:
                   git config user.email '${{ vars.GIT_USER_EMAIL }}'
                   git add .
                   git commit -m "Update metadata" || echo "No changes to commit in current repo"
-                  git remote set-url origin https://x-access-token:${{ secrets.GIT_TOKEN }}@github.com/${{ vars.GIT_USER_NAME }}/nolog.git
+                  git remote set-url origin https://x-access-token:${{ secrets.GITTOKEN }}@github.com/${{ vars.GIT_USER_NAME }}/nolog.git
                   git push origin HEAD:master
 
             - name: Set Git remote URL with token and Commit and Push Changes
               id: commit_changes # 이 단계에 ID 부여
               run: |
                   cd blog-repo
-                  git remote set-url origin https://${{ secrets.GIT_TOKEN }}@github.com/${{ vars.BLOG_REPO }}
+                  git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ vars.BLOG_REPO }}
                   git config user.name '${{ vars.GIT_USER_NAME }}'
                   git config user.email '${{ vars.GIT_USER_EMAIL }}'
                   git add .
