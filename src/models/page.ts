@@ -163,13 +163,24 @@ export class Page {
         for (const key in this.properties) {
             const value = this.properties[key];
 
+            // old code
             // 값이 존재하고, 태그 배열인 경우 특별 처리
+            // if (value) {
+            //     if (key === 'tags' && Array.isArray(value)) {
+            //         metadata.push(`tags:\n  - ${value.join('\n  - ')}`);
+            //     } else {
+            //         // 기타 모든 속성에 대한 처리
+            //         metadata.push(`${key}: ${JSON.stringify(value)}`);
+            //     }
+            // }
+
+            // gatsby 블로그 템플릿 형식에 맞게 처리
             if (value) {
-                if (key === 'tags' && Array.isArray(value)) {
-                    metadata.push(`tags:\n  - ${value.join('\n  - ')}`);
+                if (Array.isArray(value)) {
+                    metadata.push(`${key}: ${value.join(' ')}`);
                 } else {
                     // 기타 모든 속성에 대한 처리
-                    metadata.push(`${key}: ${JSON.stringify(value)}`);
+                    metadata.push(`${key}: ${value}`);
                 }
             }
         }
