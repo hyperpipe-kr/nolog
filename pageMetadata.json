@@ -2,6 +2,9 @@
   "2": {
     "path": "테스트-용도2"
   },
+  "3": {
+    "path": "모델-서빙-환경---Docker"
+  },
   "Owner": {
     "GIT_USER_NAME": "hyperpipe-kr"
   }
