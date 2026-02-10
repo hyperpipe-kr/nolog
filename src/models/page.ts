@@ -182,7 +182,7 @@ export class Page {
                     metadata.push(`${key}: ${value.join(' ')}`);
                 } else {
                     // 기타 모든 속성에 대한 처리
-                    metadata.push(`${key}: ${value}`);
+                    metadata.push(`${key}: ${JSON.stringify(value)}`);
                 }
             }
         }
