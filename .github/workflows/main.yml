@@ -111,6 +111,9 @@ jobs:
 
             - name: Set Git remote URL with token
               run: git remote set-url origin https://${{ secrets.GITTOKEN }}@github.com/${{ secrets.BLOG_REPO }}
-
+            
+            - name: Set CNAME
+              run: echo 'tech.hyperpipe.kr' > public/CNAME
+            
             - name: Deploy to GitHub Pages
               run: npx gh-pages -d public
