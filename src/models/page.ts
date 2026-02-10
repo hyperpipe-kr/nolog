@@ -143,7 +143,9 @@ export class Page {
             const markdownMetadata = this.formatMarkdownMetadata();
 
             // 마크다운 메타데이터와 contentMarkdown을 결합
-            const fullMarkdown = `${markdownMetadata}${this.contentMarkdown}`;
+            const fullMarkdown = `${markdownMetadata}${this.contentMarkdown}
+\`\`\`toc
+\`\`\``;
             let dir = join(this.envConfig.saveDir!, this.pageUrl!);
             // 디렉토리 생성 (이미 존재하는 경우 오류를 무시함)
             await fs.mkdir(dir, { recursive: true });
