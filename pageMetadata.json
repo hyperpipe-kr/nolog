@@ -26,6 +26,12 @@
   "12": {
     "path": "리드-엔지니어란"
   },
+  "13": {
+    "path": "Multi-Domain-Recommendation-Is-All-You-Need"
+  },
+  "14": {
+    "path": "MLP-모델-성능-평가-지표"
+  },
   "Owner": {
     "GIT_USER_NAME": "hyperpipe-kr"
   }
