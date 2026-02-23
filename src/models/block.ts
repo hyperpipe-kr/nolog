@@ -56,29 +56,32 @@ export class Block {
         tableBlock: GetBlockResponse,
     ): Promise<string> {
         let markdown = '';
-
-        // 여기에서 테이블 행들을 루프하여 처리합니다.
-        const rows = await this.notion.blocks.children.list({
-            block_id: tableBlock.id,
-        });
         let first_row = true;
-        for (const row of rows.results) {
-            if ('type' in row) {
-                if (row.type === 'table_row') {
-                    markdown += await MarkdownConverter.convertTableRow(
-                        row.table_row,
-                    );
-                    if (first_row) {
-                        // 구분선 생성
-                        markdown +=
-                            '| ' +
-                            row.table_row.cells.map(() => '---').join(' | ') +
-                            ' |\n';
-                        first_row = false;
+        let cursor: string | undefined;
+        do {
+            const rows = await this.notion.blocks.children.list({
+                block_id: tableBlock.id,
+                ...(cursor && { start_cursor: cursor }),
+            });
+            for (const row of rows.results) {
+                if ('type' in row) {
+                    if (row.type === 'table_row') {
+                        markdown += await MarkdownConverter.convertTableRow(
+                            row.table_row,
+                        );
+                        if (first_row) {
+                            // 구분선 생성
+                            markdown +=
+                                '| ' +
+                                row.table_row.cells.map(() => '---').join(' | ') +
+                                ' |\n';
+                            first_row = false;
+                        }
                     }
                 }
             }
-        }
+            cursor = rows.has_more ? rows.next_cursor ?? undefined : undefined;
+        } while (cursor);
 
         return markdown + '\n';
     }
@@ -115,19 +118,24 @@ export class Block {
         blockId: string,
         plusIndent: number = 1,
     ): Promise<string> {
-        const children = await this.notion.blocks.children.list({
-            block_id: blockId,
-        });
         let markdown = '';
-        for (const child of children.results) {
-            const childBlock = new Block(
-                this.notion,
-                child.id,
-                this.pageUrl,
-                this.indentLevel + plusIndent,
-            );
-            markdown += await childBlock.getMarkdown();
-        }
+        let cursor: string | undefined;
+        do {
+            const children = await this.notion.blocks.children.list({
+                block_id: blockId,
+                ...(cursor && { start_cursor: cursor }),
+            });
+            for (const child of children.results) {
+                const childBlock = new Block(
+                    this.notion,
+                    child.id,
+                    this.pageUrl,
+                    this.indentLevel + plusIndent,
+                );
+                markdown += await childBlock.getMarkdown();
+            }
+            cursor = children.has_more ? children.next_cursor ?? undefined : undefined;
+        } while (cursor);
         return markdown;
     }
 }

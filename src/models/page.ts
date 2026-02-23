@@ -208,21 +208,25 @@ export class Page {
     }
 
     private async fetchAndProcessBlocks(): Promise<string> {
-        // Fetch blocks for the current page
-        const blocks = await this.notion.blocks.children.list({
-            block_id: this.pageId,
-        });
-
-        // Process each block and convert to Markdown
+        // Fetch blocks for the current page (with pagination: API returns max 100 per request)
         let markdownContent = '';
-        for (const block of blocks.results) {
-            const blockInstance = new Block(
-                this.notion,
-                block.id,
-                this.pageUrl,
-            );
-            markdownContent += await blockInstance.getMarkdown();
-        }
+        let cursor: string | undefined;
+        do {
+            const blocks = await this.notion.blocks.children.list({
+                block_id: this.pageId,
+                ...(cursor && { start_cursor: cursor }),
+            });
+
+            for (const block of blocks.results) {
+                const blockInstance = new Block(
+                    this.notion,
+                    block.id,
+                    this.pageUrl,
+                );
+                markdownContent += await blockInstance.getMarkdown();
+            }
+            cursor = blocks.has_more ? blocks.next_cursor ?? undefined : undefined;
+        } while (cursor);
         return markdownContent;
     }
 
